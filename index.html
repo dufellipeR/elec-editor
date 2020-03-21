@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Elecditor</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./photon/css/photon.css">
+    <style>
+      textarea { 
+        width: 100%;
+        height: 100%; 
+        resize: none; 
+        border: none; 
+        outline: none; 
+        font-size: 1.35rem;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <!-- Wrap your entire app inside .window -->
+    <div class="window">
+      <!-- .toolbar-header sits at the top of your app -->
+      <header class="toolbar toolbar-header">      
+        <div class="toolbar-actions">
+          <div class="btn-group">
+            <button class="btn btn-default" onclick="plus()">
+              <span class="icon icon-plus"></span>
+            </button>
+            <button class="btn btn-default" onclick="minus()">
+              <span class="icon icon-minus"></span>
+            </button>
+            </div>
+      
+          <button class="btn btn-default pull-right" onclick="save()">
+            <span class="icon icon-download icon-text"></span>
+            Save
+          </button>
+        </div>
+      </header>
+
+      <!-- Your app's content goes inside .window-content -->
+      <div class="window-content">
+       <textarea name="" id="" cols="30" rows="10"></textarea>
+      </div>
+    </div>
+    <script>
+      const electron = require('electron')
+      const { ipcRenderer } = electron
+      let textarea = document.querySelector('textarea')
+      let defaultSize = 20
+      const plus = () => { 
+       
+        textarea.style.fontSize = `${++defaultSize}px`
+      }
+      const minus = () => { 
+       
+       textarea.style.fontSize = `${--defaultSize}px`
+     }
+     ipcRenderer.on('menu-save',() => { 
+       save()
+     } )
+
+
+     const save = () => {
+      let text = textarea.value
+      console.log(text);
+      ipcRenderer.send('save', text)
+      
+     }
+
+     ipcRenderer.on('saved', (event, data) => { 
+       if (data === 'success') {
+         textarea.style.backgroundColor = '#b2ff99'
+       } else { 
+        textarea.style.backgroundColor = '#ff8989'
+       }
+
+       setTimeout(() => { 
+        textarea.style.backgroundColor = ''
+       }, 900)
+       
+      })
+
+    </script>
+  </body>
+</html>
